@@ -1,18 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     fetchAllBooks();
 
-    //RENDER
-    function renderBookList(book) {
-        let ul = document.getElementById('list')
-        let li = document.createElement('li')
-        li.id = book.id
-        li.textContent = book.title
-        li.addEventListener('click', handleClick)
-        ul.appendChild(li)
-    }
-
     //DATA
-    //GET
+        //GET
     function fetchAllBooks() {
         fetch('http://localhost:3000/books')
         .then(res => res.json())
@@ -27,6 +17,26 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(book => loadBook(book))
     }
 
+        //PATCH
+    function patchLike(book) {
+        fetch(`http://localhost:3000/books/${book.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify({
+                "users": [...book["users"],
+                    {"id":1, "username":"pouros"}
+                ]
+            })
+        })
+        .then(res => res.json())
+        .then(book => {
+            loadBook(book)
+        })
+        .catch(error => console.log(error))
+    }
 
 
     // Change DOM Elements
@@ -58,28 +68,14 @@ document.addEventListener("DOMContentLoaded", function() {
         container.append(bookImg, bookTitle, bookSubtitle, bookAuthor, description, likesUl, likeBtn)
     }
 
-    //PATCH
-
-    function patchLike(book) {
-        fetch(`http://localhost:3000/books/${book.id}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json'
-            },
-            body: JSON.stringify({
-                "users": [
-                    {"id":2, "username":"auer"},
-                    {"id":8, "username":"maverick"},
-                    {"id":1, "username":"pouros"}
-                ]
-            })
-          })
-          .then(res => res.json())
-          .then(book => {
-              loadBook(book)
-            })
-          .catch(error => console.log(error))
+        //RENDER
+    function renderBookList(book) {
+        let ul = document.getElementById('list')
+        let li = document.createElement('li')
+        li.id = book.id
+        li.textContent = book.title
+        li.addEventListener('click', handleClick)
+        ul.appendChild(li)
     }
 
     //Handle Event Listener
